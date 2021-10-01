@@ -18,17 +18,22 @@ options {
   dir_perm(0755);
 };
 
-
+# Templates
 template t_remote { template("${ISODATE} ${HOST} ${LEVEL} ${MSGHDR}${MSG}\n"); };
 
+# Log sources
 source s_local {
   system();
   internal();
 };
 
+# Destination local
 destination d_local { file("/var/log/messages" template(t_remote)); };
+
+# Destination remote
 destination d_remote { syslog("10.8.0.9" transport("tcp") port(514)); };
 
+# Log configuration
 log {
   source(s_local);
   destination(d_local);

@@ -19,31 +19,33 @@ options {
   ts_format(iso);
 };
 
-
+# Templates
 template t_remote { template("${ISODATE} ${HOST} ${LEVEL} ${MSGHDR}${MSG}\n"); };
+
+# Source local
 source s_local {
   system();
   internal();
 };
 
+# Source remote
 source s_remote {
   syslog(transport(tcp) port(514));
 };
 
+# Destination local
 destination d_local { file("/var/log/messages" template(t_remote)); };
+
+# Destination remote
 destination d_remote { file("/mnt/hdd/share/all/log/messages.log" template(t_remote)); };
 
-# Send messages to console of everyone logged in.
-destination d_cons_all { usertty("*"); };
-
-# Send message to the root's console.
-destination d_cons_root { usertty("root"); };
-
+# Log configuration locally
 log {
   source(s_local);
   destination(d_local);
 };
 
+# Log configuration collector
 log {
   source(s_local);
   source(s_remote);
